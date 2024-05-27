@@ -14,18 +14,22 @@ http://viacep.com.br/ws/" + cep + "/json/
 
 - Limitar o tempo de resposta em 1 segundo. Caso contrário, o erro de timeout deve ser exibido.
 
+### :warning: <span style="color:red">Nos requisitos do desafio não diz como seria a requisição, se é através de um client API, ou através de linha de comando. Implementei como uma requisição através de linha de comando.</span> :warning:
+
 #### Sobre o sistema 
 Go Versão: 1.21
 
 #### Utilização 
 
 baixar o projeto
-```
+```shel
 git clone https://github.com/chasinfo/multithreading-api.git
 ```
 
-Iniciar o servidor: http://localhost:8080/multithreading-api
-```
+Executar o comando informando o CEP
+
+Ex. go run main.go <numero do cep>
+```shel
 cd multithreading-api
-go run main.go 
+go run main.go 72156209
 ```
