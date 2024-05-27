@@ -57,35 +57,40 @@ func main() {
 	enderecoBrasilAPI := make(chan *dtos.BrasilApiCep)
 	enderecoViaCEP := make(chan *dtos.ViaCEP)
 
-	for _, cep := range os.Args[1:] {
+	if len(os.Args) == 1 {
+		println("O comando deve ser digitado da seguinte forma: main.go [numero do cep]. Ex. main.go 71687548")
+	} else {
 
-		go func() {
-			data, error := getEnderecoBrasilAPI(cep)
+		for _, cep := range os.Args[1:] {
 
-			if error != nil {
-				fmt.Println(error)
+			go func() {
+				data, error := getEnderecoBrasilAPI(cep)
+
+				if error != nil {
+					fmt.Println(error)
+				}
+
+				enderecoBrasilAPI <- data
+			}()
+
+			go func() {
+				data, error := getEnderecosViaCEP(cep)
+
+				if error != nil {
+					fmt.Println(error)
+				}
+
+				enderecoViaCEP <- data
+			}()
+
+			select {
+			case data := <-enderecoBrasilAPI:
+				fmt.Printf("CEP: %s, \nLogradouro: %s \nBairro: %s \nLocalidade: %s, \nUF: %s \napi: BrasilAPI\n", data.Cep, data.Logradouro, data.Bairro, data.Localidade, data.UF)
+			case data := <-enderecoViaCEP:
+				fmt.Printf("CEP: %s, \nLogradouro: %s \nBairro: %s \nLocalidade: %s, \nUF: %s \napi: ViaCEP\n", data.Cep, data.Logradouro, data.Bairro, data.Localidade, data.UF)
+			case <-time.After(time.Second * 1):
+				println("timeout")
 			}
-
-			enderecoBrasilAPI <- data
-		}()
-
-		go func() {
-			data, error := getEnderecosViaCEP(cep)
-
-			if error != nil {
-				fmt.Println(error)
-			}
-
-			enderecoViaCEP <- data
-		}()
-
-		select {
-		case data := <-enderecoBrasilAPI:
-			fmt.Printf("CEP: %s, \nLogradouro: %s \nBairro: %s \nLocalidade: %s, \nUF: %s \napi: BrasilAPI\n", data.Cep, data.Logradouro, data.Bairro, data.Localidade, data.UF)
-		case data := <-enderecoViaCEP:
-			fmt.Printf("CEP: %s, \nLogradouro: %s \nBairro: %s \nLocalidade: %s, \nUF: %s \napi: ViaCEP\n", data.Cep, data.Logradouro, data.Bairro, data.Localidade, data.UF)
-		case <-time.After(time.Second * 1):
-			println("timeout")
 		}
 	}
 }
