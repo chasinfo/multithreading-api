@@ -54,12 +54,12 @@ func getEnderecoBrasilAPI(cep string) (*dtos.BrasilApiCep, error) {
 
 func main() {
 
-	enderecoBrasilAPI := make(chan *dtos.BrasilApiCep)
-	enderecoViaCEP := make(chan *dtos.ViaCEP)
-
 	if len(os.Args) == 1 {
 		println("O comando deve ser digitado da seguinte forma: main.go [numero do cep]. Ex. main.go 71687548")
 	} else {
+
+		enderecoBrasilAPI := make(chan *dtos.BrasilApiCep)
+		enderecoViaCEP := make(chan *dtos.ViaCEP)
 
 		for _, cep := range os.Args[1:] {
 
